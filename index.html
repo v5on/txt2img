@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Text to Image Generator</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; text-align: center; }
+    input, select, button { padding: 0.5rem; margin: 0.5rem; }
+    img { max-width: 90%; margin-top: 1rem; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>🖼️ Text to Image Generator</h1>
+  <input type="text" id="prompt" placeholder="Enter prompt..." size="50">
+  <select id="style">
+    <option value="realistic">Realistic</option>
+    <option value="anime">Anime</option>
+    <option value="cartoon">Cartoon</option>
+  </select>
+  <select id="ratio">
+    <option value="1:1">1:1</option>
+    <option value="16:9">16:9</option>
+    <option value="21:9">21:9</option>
+  </select>
+  <button onclick="generate()">Generate</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function generate() {
+      const prompt = document.getElementById('prompt').value;
+      const style = document.getElementById('style').value;
+      const ratio = document.getElementById('ratio').value;
+
+      const res = await fetch(`/api/generate?prompt=${encodeURIComponent(prompt)}&style=${style}&ratio=${ratio}`);
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('result').innerHTML = `
+          <h2>Generated Image:</h2>
+          <img src="data:image/png;base64,${data.image}" />
+        `;
+      } else {
+        document.getElementById('result').innerHTML = `<p style="color: red;">Failed to generate image</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
